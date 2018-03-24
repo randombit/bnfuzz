@@ -10,7 +10,6 @@ IMPLS=$(wildcard bnfuzz_*.h)
 
 LIBS=
 INCLUDES=
-IMPLS=
 
 ifeq ($(USE_OPENSSL),1)
    LIBS += -lcrypto

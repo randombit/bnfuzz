@@ -5,12 +5,18 @@
 #include "bnfuzz.h"
 #include <cryptopp/integer.h>
 #include <cryptopp/hex.h>
+#include <cryptopp/eccrypto.h>
+#include <cryptopp/oids.h>
 
 namespace BN_Fuzz {
 
 class CryptoPP_BN_Lib : public BN_Lib
    {
    private:
+      CryptoPP::DL_GroupParameters_EC<CryptoPP::ECP> secp256r1;
+      CryptoPP::DL_GroupParameters_EC<CryptoPP::ECP> secp384r1;
+      CryptoPP::DL_GroupParameters_EC<CryptoPP::ECP> secp521r1;
+      CryptoPP::DL_GroupParameters_EC<CryptoPP::ECP> bp256r1;
       /* whatever */
 
       std::string hex_encode(const uint8_t* b, size_t len)
@@ -45,7 +51,11 @@ class CryptoPP_BN_Lib : public BN_Lib
          }
 
    public:
-      CryptoPP_BN_Lib()
+      CryptoPP_BN_Lib() :
+         secp256r1(CryptoPP::ASN1::secp256r1()),
+         secp384r1(CryptoPP::ASN1::secp384r1()),
+         secp521r1(CryptoPP::ASN1::secp521r1()),
+         bp256r1(CryptoPP::ASN1::brainpoolP256r1())
          {
          }
 
@@ -123,14 +133,17 @@ class CryptoPP_BN_Lib : public BN_Lib
                return to_string((a % b).InverseMod(b));
 
             case BN_op::P256_mul_x:
-               {}
+               return to_string(secp256r1.ExponentiateBase(a).x);
 
             case BN_op::P384_mul_x:
-               {}
+               return to_string(secp384r1.ExponentiateBase(a).x);
+
             case BN_op::P521_mul_x:
-               {}
+               return to_string(secp521r1.ExponentiateBase(a).x);
+
             case BN_op::BP256_mul_x:
-               {}
+               return to_string(bp256r1.ExponentiateBase(a).x);
+
             }
 
          return "";

@@ -24,7 +24,7 @@ enum class BN_op {
    P521_mul_x,
    BP256_mul_x,
 
-   Last = ModExp,
+   Last = BP256_mul_x,
 };
 
 std::string to_string(BN_op op);
